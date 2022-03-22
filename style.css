@@ -1,0 +1,50 @@
+body {
+    background-color: rgb(17,89,36);
+}
+
+.container {
+    height:97.6vh;
+    width: 1886px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scoreboard {
+    height: 100px;
+    width: 100px;
+}
+
+#health {
+    height: 20px;
+    width: 400px;
+    background-color: black;
+    top:0px;
+    left:0px;
+    position: absolute;
+    border: 5px solid black;
+}
+
+.button {
+    width: 100px;
+    height: 20px;
+    
+}
+
+.menucontainer {
+    height:97.75vh;
+    width: 1886px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid black;
+}
+
+#title{
+    position:absolute;
+    top:10px;
+    left:50%;
+    transform: translateX(-50%);
+    font-size:30px;
+    line-height: 70px;
+  }
