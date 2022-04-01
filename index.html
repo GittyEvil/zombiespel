@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="style.css">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>game</title>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="scoreboard"></div>
+    </div>
+
+    </div>
+</div>
+
+<div id="title">
+    Score:
+  </div>
+
+    <script src="simple.js">
+    
+    
+    var bullets = []
+    var refX = 100;
+    var refY = 100;
+    var refhealth = 100;
+    var yofhealth = 100;
+    var refan = 'refan.png';
+    var audio = new Audio('music.mp3')
+    var killeffect = new Audio('oof.mp3')
+    var yofas = [];
+    var  i = 0;
+    var edmg = 10;
+    var dmg = 10;
+    var score = 0;
+    var boxes = []
+
+    //skapar enemies i while loop
+    while (i < 10) {
+             yofas.push({x:random(totalWidth), y:random(totalHeight), speed:random(1,5) });
+             i += 1;
+         }
+    //själva enemien
+    var yofa = {x: random(totalWidth),
+                y: random(totalHeight),
+                speed: random(1,3)}
+
+    var box = {x: random(totalWidth),
+               y: random(totalHeight),
+               speed: random(1,3)}
+
+    //funktionen för enemy
+    function updateEnemy() {
+        var i = 0;
+        while (i < yofas.length) {
+                 var yofa = yofas[i]
+            
+        picture(yofa.x, yofa.y, "yofa.png");
+
+        if(Math.abs(yofa.x - refX) < yofa.speed) {
+            yofa.x = refX
+        }
+        if(Math.abs(yofa.y - refY) < yofa.speed) {
+            yofa.y = refY
+        }
+        
+        if (yofa.x < refX){
+        yofa.x += yofa.speed;
+        }else if(yofa.x > refX){
+            yofa.x -= yofa.speed;}
+
+        if (yofa.y < refY) {
+        yofa.y += yofa.speed;
+        }else if (yofa.y > refY) {
+            yofa.y -= yofa.speed;}
+        
+        //tar bredden på din hpbar och räknar ut pixelperhp för skadan
+        breddhpbar = 200;
+        pxperhp = breddhpbar/yofhealth;
+
+        {
+        //enemies healthbar
+        line(yofas[i].x , yofas[i].y  + 150, yofas[i].x + breddhpbar, yofas[i].y + 150, 10, 'red')
+        line(yofas[i].x , yofas[i].y + 150, yofas[i].x + (yofhealth*pxperhp), yofas[i].y + 150, 10, 'green')
+
+        i += 1;
+        }
+        }
+    }
+
+    //funktion för spelaren
+    function updateRevan() {
+        refHealth = 100;
+        picture(refX, refY, refan,);
+
+        if(keyboard.d)
+            refX +=10;
+
+        if(keyboard.s)
+            refY +=10;
+
+        if(keyboard.a)
+            refX -=10;
+
+        if(keyboard.w)
+            refY -=10;
+        
+        //liten dash för att undvika skada
+        if (keyboard.space){
+            refX +=30;
+            refY += 30;
+        }
+
+        //bredd på hpbar och räknar ut pixlar som kommer användas för skadan
+        breddhpbar = 200;
+        pxperhp = breddhpbar/refhealth;
+        
+        //healthar för spelare
+        line(refX , refY + 40, refX + breddhpbar, refY + 40, 10, 'red')
+        line(refX , refY + 40, refX + (refHealth*pxperhp), refY + 40, 10, 'green')
+    }    
+
+    //funktionen för spelarens attacker
+    function shoot() {
+        //kollar så att musen är inom motståndarens hitbox(200x200 pixlar)
+        for(i=0; i < yofas.length;i++){
+    if (mouse.x > yofas[i].x && mouse.x < yofas[i].x + 200 && mouse.y > yofas[i].y && mouse.y < yofas[i].y + 200 && mouse.left )
+
+    {
+        //skadar enemy om krav nått
+        yofhealth -= dmg;
+        if (yofhealth < 0 )
+            yofas.splice(i,1)
+            score ++,
+            document.getElementById("title").innerHTML = score;
+            killeffect.play()
+        break;
+
+    }
+
+}}
+
+    //funktion för enemies skada
+    function enemydmg() {
+        //kollar om yofa är inom spelares hitbox
+        for(i=0; i < yofas.length;i++){
+    if (refX > yofas[i].x && refX < yofas[i].x + 200 && refY > yofas[i].y && refY < yofas[i].y + 200)
+    {
+        //skadar spelaren om krav nått
+       refhealth-=edmg
+       if(refhealth < 0) {
+           stopUpdate()
+           alert('You died.')
+       }
+
+    }
+    }   
+    }
+
+    //powerup som gör att om du nuddar box får du 20 skada per slag istället för 10, tar dock inte bort lådan
+    function powerup() {
+        picture(box.x, box.y, "box.png");
+        if (box.x> refX && box.x < refX + 200 && box.y > refY && box.y < refY + 200)
+    {
+        dmg = 20;
+       boxes.splice(i,0)
+       boxes.pop()
+    }
+    }
+
+
+
+    function endgame() {
+        for(i=0; i < yofas.length;i++){
+    if (refX > yofas[i].x && refX < yofas[i].x + 200 && refY > yofas[i].y && refY < yofas[i].y + 200)
+    {
+       //stopUpdate()
+       //alert('Game Over')
+
+    }
+    }   
+    }
+
+    //uppdaterar alla funktioner
+    function update() {
+        clearScreen()
+        updateRevan();
+        updateEnemy();
+        shoot();
+        enemydmg();
+        powerup()
+        audio.play()
+        endgame()
+    
+    }
+    
+    </script>
+</body>
+
+
+</html>
